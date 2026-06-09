@@ -1,13 +1,3 @@
-To fulfill your request, I have integrated the timezone toggle and the weekday display into the full code.
-
-**Changes implemented:**
-
-1. **Global Timezone State:** Added `currentTZ` to track 'IST' vs 'GCC' (UTC+4).
-2. **Date Conversion:** Added a `getFormattedTime` helper that converts match dates to the year 2026, calculates the 90-minute time difference, and pulls the weekday name (e.g., "Thu").
-3. **UI Toggle:** Added a toggle button at the top that refreshes the interface.
-4. **Full Integration:** The logic is embedded directly into the script, replacing your previous `mkCard` function and adding the necessary controller logic.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +22,6 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);over
 .tz-toggle-btn{background:var(--blue);color:white;border:none;padding:12px 24px;border-radius:20px;cursor:pointer;margin:15px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;}
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 20px;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 120% 80% at 50% 60%,#0A1F4A 0%,var(--bg) 70%);}
-.pitch-svg{position:absolute;inset:0;opacity:0.06;pointer-events:none}
 .hero-content{position:relative;z-index:2}
 .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,28vw,220px);color:var(--text);line-height:0.85;letter-spacing:-2px;margin-bottom:12px;}
 .hero-title span{color:var(--green)}
@@ -52,8 +41,6 @@ body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);over
 .mc-time{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--green)}
 .mc-ist{font-size:9px;color:var(--muted);text-transform:uppercase}
 .mc-bottom{padding:8px 14px;border-top:1px solid var(--border);font-size:11px;color:var(--muted)}
-.gtab{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--muted);cursor:pointer;margin:3px;}
-.gtab.active{background:var(--green-dim);border-color:var(--green);color:var(--green)}
 </style>
 </head>
 <body>
@@ -93,8 +80,14 @@ function toggleTimezone() {
 
 // 2. TIME & DATE CALCULATION
 function getFormattedTime(dateStr, timeStr) {
+    // 2026 Context
     const d = new Date(`${dateStr}, 2026 ${timeStr}`);
-    if (currentTZ === 'GCC') d.setMinutes(d.getMinutes() - 90);
+    
+    // GCC Offset: IST is UTC+5:30, GCC is UTC+4. Subtract 90 mins for GCC.
+    if (currentTZ === 'GCC') {
+        d.setMinutes(d.getMinutes() - 90);
+    }
+    
     const day = d.toLocaleDateString('en-US', { weekday: 'short' });
     const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
     return { day, time };
@@ -114,7 +107,7 @@ function mkCard(m) {
     </div>`;
 }
 
-// 4. DATA (Example Subset for brevity)
+// 4. DATA 
 const MATCHES = [
     {no:1, date:"Jun 11", time:"12:30 AM", h:"🇲🇽", hn:"Mexico", a:"🇿🇦", an:"South Africa", venue:"Estadio Azteca"},
     {no:2, date:"Jun 12", time:"7:30 AM", h:"🇰🇷", hn:"South Korea", a:"🇨🇿", an:"Czechia", venue:"Estadio Akron"}
@@ -135,5 +128,3 @@ renderByDate();
 </script>
 </body>
 </html>
-
-```
